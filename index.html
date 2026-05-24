@@ -2,111 +2,376 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<title>ABC Buyer Gauge</title>
 
 <style>
+
 body{
-    margin:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    background:transparent;
-    font-family:Arial,sans-serif;
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:transparent;
+  font-family:Arial,sans-serif;
 }
 
 .gauge{
-    width:320px;
-    height:320px;
-    border-radius:50%;
-    background:conic-gradient(
-        #ef4444 0deg 60deg,
-        #f97316 60deg 120deg,
-        #eab308 120deg 180deg,
-        #84cc16 180deg 240deg,
-        #22c55e 240deg 360deg
+  width:420px;
+  height:420px;
+  border-radius:50%;
+  background:linear-gradient(145deg,#ff8a1f,#e95f00);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:
+    0 12px 25px rgba(0,0,0,.25),
+    inset 0 8px 12px rgba(255,255,255,.35);
+}
+
+.face{
+  width:350px;
+  height:350px;
+  border-radius:50%;
+  position:relative;
+  background:radial-gradient(circle,#fff8eb 0%,#f0e4cf 78%,#d1bea0 100%);
+  box-shadow:
+    inset 0 0 24px rgba(0,0,0,.35),
+    0 0 0 6px #222;
+  overflow:hidden;
+}
+
+.arc{
+  position:absolute;
+  inset:24px;
+  border-radius:50%;
+  background:
+    conic-gradient(
+      from 215deg,
+      transparent 0deg,
+      transparent 230deg,
+      #6aa84f 231deg,
+      #6aa84f 262deg,
+      #cc1f1a 263deg,
+      #cc1f1a 274deg,
+      transparent 275deg
     );
-    display:flex;
-    justify-content:center;
-    align-items:center;
+
+  mask:
+    radial-gradient(
+      circle,
+      transparent 71%,
+      #000 72%,
+      #000 76%,
+      transparent 77%
+    );
 }
 
-.inner{
-    width:250px;
-    height:250px;
-    background:#FFFFFF;
-    border-radius:50%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
+.num{
+  position:absolute;
+  font-weight:700;
+  font-size:18px;
+  color:#222;
 }
 
-.number{
-    font-size:52px;
-    font-weight:bold;
-    color:#111;
+.n0{left:62px; top:212px;}
+.n2{left:58px; top:145px;}
+.n4{left:122px; top:56px;}
+.n6{right:86px; top:56px;}
+.n8{right:48px; top:147px;}
+.n10{right:45px; top:215px;}
+
+.title{
+  position:absolute;
+  top:118px;
+  width:100%;
+  text-align:center;
+  font-weight:800;
+  font-size:20px;
+  line-height:22px;
+  color:#222;
 }
 
-.label{
-    margin-top:10px;
-    font-size:18px;
-    letter-spacing:2px;
+.needle{
+  position:absolute;
+  width:145px;
+  height:12px;
+  background:#2c3338;
+  top:193px;
+  left:175px;
+  transform-origin:0% 50%;
+  transform:rotate(-135deg);
+  border-radius:10px;
+  z-index:5;
+  box-shadow:0 2px 4px rgba(0,0,0,.35);
+  transition:transform .8s ease;
+}
+
+.hub{
+  position:absolute;
+  width:50px;
+  height:50px;
+  top:174px;
+  left:150px;
+  border-radius:50%;
+  background:#252525;
+  z-index:6;
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,.25),
+    0 2px 6px rgba(0,0,0,.45);
+}
+
+.hub:after{
+  content:"";
+  position:absolute;
+  width:26px;
+  height:26px;
+  top:12px;
+  left:12px;
+  border-radius:50%;
+  background:#111;
+}
+
+.digital{
+  position:absolute;
+  left:50%;
+  bottom:78px;
+  transform:translateX(-50%);
+  background:#202020;
+  color:#f5f5f5;
+  font-family:"Courier New",monospace;
+  font-size:30px;
+  font-weight:700;
+  letter-spacing:4px;
+  padding:5px 14px;
+  border-radius:5px;
+  box-shadow:
+    inset 0 0 5px #000,
+    0 0 0 3px #111;
+}
+
+.caption{
+  position:absolute;
+  bottom:49px;
+  width:100%;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+  color:#333;
 }
 
 .status{
-    margin-top:8px;
-    font-size:11px;
-    color:#777;
+  position:absolute;
+  bottom:30px;
+  width:100%;
+  text-align:center;
+  font-size:9px;
+  color:#777;
 }
+
+.screw{
+  position:absolute;
+  width:15px;
+  height:15px;
+  bottom:38px;
+  border-radius:50%;
+  background:#202020;
+  box-shadow:
+    inset 2px 2px 2px rgba(255,255,255,.35);
+}
+
+.screw.left{left:47px;}
+.screw.right{right:47px;}
+
+.tick{
+  position:absolute;
+  left:174px;
+  top:174px;
+  width:2px;
+  height:13px;
+  background:#222;
+  transform-origin:1px 1px;
+}
+
+.tick.small{
+  height:8px;
+  width:1px;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="gauge">
-    <div class="inner">
-        <div class="number" id="buyerCount">Loading</div>
-        <div class="label">TOTAL BUYERS</div>
-        <div class="status" id="status">Connecting...</div>
+  <div class="face" id="face">
+
+    <div class="arc"></div>
+
+    <!-- Labels -->
+    <div class="num n0">0</div>
+    <div class="num n2">200</div>
+    <div class="num n4">400</div>
+    <div class="num n6">600</div>
+    <div class="num n8">800</div>
+    <div class="num n10">1,000</div>
+
+    <div class="title">
+      TOTAL<br>BUYERS
     </div>
+
+    <div class="needle" id="needle"></div>
+
+    <div class="hub"></div>
+
+    <div class="digital" id="buyerCount">
+      000000
+    </div>
+
+    <div class="caption">
+      BUYERS IN DATABASE
+    </div>
+
+    <div class="status" id="status">
+      Connecting...
+    </div>
+
+    <div class="screw left"></div>
+    <div class="screw right"></div>
+
+  </div>
 </div>
 
 <script>
-const JSON_URL = "https://gist.githubusercontent.com/LucyG2627/80957c760a44a0f5a289f18020d8d5fc/raw/cc9af55b9b918af0999a0063175cbd4557a9c5f1/buyers.json";
+
+const JSON_URL =
+"https://gist.githubusercontent.com/LucyG2627/80957c760a44a0f5a289f18020d8d5fc/raw/buyers.json";
+
+const MAX_BUYERS = 1000;
+
+const face = document.getElementById("face");
+
+for(let i=0;i<=50;i++){
+
+  const tick = document.createElement("div");
+
+  tick.className =
+    i % 5 === 0
+    ? "tick"
+    : "tick small";
+
+  const angle = -135 + i * 5.4;
+
+  const radius = 145;
+
+  const x =
+    175 +
+    Math.cos((angle - 90) * Math.PI/180)
+    * radius;
+
+  const y =
+    175 +
+    Math.sin((angle - 90) * Math.PI/180)
+    * radius;
+
+  tick.style.left = x + "px";
+  tick.style.top = y + "px";
+
+  tick.style.transform =
+    "rotate(" + angle + "deg)";
+
+  face.appendChild(tick);
+
+}
+
+function formatCounter(num){
+
+  return String(
+    Math.round(num)
+  ).padStart(6,"0");
+
+}
+
+function setNeedle(value){
+
+  const clamped =
+    Math.max(
+      0,
+      Math.min(value, MAX_BUYERS)
+    );
+
+  const startAngle = -135;
+  const endAngle = 135;
+
+  const angle =
+    startAngle +
+    (clamped / MAX_BUYERS)
+    * (endAngle - startAngle);
+
+  document.getElementById("needle")
+    .style.transform =
+      "rotate(" + angle + "deg)";
+
+}
 
 async function loadCount(){
-    try{
-        const response = await fetch(JSON_URL, { cache: "no-store" });
 
-        if(!response.ok){
-            throw new Error("HTTP error " + response.status);
+  try{
+
+    const response =
+      await fetch(
+        JSON_URL + "?t=" + Date.now(),
+        {
+          cache:"no-store"
         }
+      );
 
-        const text = await response.text();
+    if(!response.ok){
 
-        let data;
+      throw new Error(
+        "HTTP error " + response.status
+      );
 
-        try {
-            data = JSON.parse(text);
-        } catch {
-            throw new Error("File is not valid JSON. It returned: " + text.substring(0, 80));
-        }
-
-        document.getElementById("buyerCount").innerText =
-            Number(data.total_buyers).toLocaleString();
-
-        document.getElementById("status").innerText =
-            "Updated " + new Date().toLocaleTimeString();
     }
-    catch(error){
-        document.getElementById("buyerCount").innerText = "ERROR";
-        document.getElementById("status").innerText = error.message;
-        console.error(error);
-    }
+
+    const data =
+      await response.json();
+
+    const count =
+      Number(data.total_buyers);
+
+    document.getElementById("buyerCount")
+      .innerText =
+        formatCounter(count);
+
+    document.getElementById("status")
+      .innerText =
+        "Updated " +
+        new Date().toLocaleTimeString();
+
+    setNeedle(count);
+
+  }
+
+  catch(error){
+
+    document.getElementById("buyerCount")
+      .innerText = "ERROR";
+
+    document.getElementById("status")
+      .innerText =
+        error.message;
+
+    console.error(error);
+
+  }
+
 }
 
 loadCount();
+
 setInterval(loadCount,30000);
+
 </script>
 
 </body>
