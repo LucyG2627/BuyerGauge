@@ -8,12 +8,14 @@
 
 body{
   margin:0;
-  height:100vh;
+  width:207px;
+  height:207px;
   display:flex;
   justify-content:center;
   align-items:center;
   background:transparent;
   font-family:Arial,sans-serif;
+  overflow:hidden;
 }
 
 .gauge{
@@ -25,25 +27,25 @@ body{
   align-items:center;
   justify-content:center;
   box-shadow:
-    0 12px 25px rgba(0,0,0,.25),
-    inset 0 8px 12px rgba(255,255,255,.35);
+    0 6px 12px rgba(0,0,0,.25),
+    inset 0 4px 6px rgba(255,255,255,.35);
 }
 
 .face{
-  width:207px;
-  height:207px;
+  width:172px;
+  height:172px;
   border-radius:50%;
   position:relative;
   background:radial-gradient(circle,#fff8eb 0%,#f0e4cf 78%,#d1bea0 100%);
   box-shadow:
-    inset 0 0 24px rgba(0,0,0,.35),
-    0 0 0 6px #222;
+    inset 0 0 12px rgba(0,0,0,.35),
+    0 0 0 3px #222;
   overflow:hidden;
 }
 
 .arc{
   position:absolute;
-  inset:24px;
+  inset:12px;
   border-radius:50%;
   background:
     conic-gradient(
@@ -70,64 +72,64 @@ body{
 .num{
   position:absolute;
   font-weight:700;
-  font-size:18px;
+  font-size:9px;
   color:#222;
 }
 
-.n0{left:62px; top:212px;}
-.n2{left:58px; top:145px;}
-.n4{left:122px; top:56px;}
-.n6{right:86px; top:56px;}
-.n8{right:48px; top:147px;}
-.n10{right:45px; top:215px;}
+.n0{left:30px; top:104px;}
+.n2{left:28px; top:72px;}
+.n4{left:58px; top:28px;}
+.n6{right:42px; top:28px;}
+.n8{right:20px; top:73px;}
+.n10{right:18px; top:105px;}
 
 .title{
   position:absolute;
-  top:118px;
+  top:52px;
   width:100%;
   text-align:center;
   font-weight:800;
-  font-size:20px;
-  line-height:22px;
+  font-size:10px;
+  line-height:11px;
   color:#222;
 }
 
 .needle{
   position:absolute;
-  width:145px;
-  height:12px;
+  width:72px;
+  height:6px;
   background:#2c3338;
-  top:193px;
-  left:175px;
+  top:95px;
+  left:86px;
   transform-origin:0% 50%;
   transform:rotate(-135deg);
   border-radius:10px;
   z-index:5;
-  box-shadow:0 2px 4px rgba(0,0,0,.35);
+  box-shadow:0 1px 2px rgba(0,0,0,.35);
   transition:transform .8s ease;
 }
 
 .hub{
   position:absolute;
-  width:50px;
-  height:50px;
-  top:174px;
-  left:150px;
+  width:24px;
+  height:24px;
+  top:84px;
+  left:74px;
   border-radius:50%;
   background:#252525;
   z-index:6;
   box-shadow:
-    inset 0 0 8px rgba(255,255,255,.25),
-    0 2px 6px rgba(0,0,0,.45);
+    inset 0 0 4px rgba(255,255,255,.25),
+    0 1px 3px rgba(0,0,0,.45);
 }
 
 .hub:after{
   content:"";
   position:absolute;
-  width:26px;
-  height:26px;
-  top:12px;
-  left:12px;
+  width:12px;
+  height:12px;
+  top:6px;
+  left:6px;
   border-radius:50%;
   background:#111;
 }
@@ -135,66 +137,66 @@ body{
 .digital{
   position:absolute;
   left:50%;
-  bottom:78px;
+  bottom:38px;
   transform:translateX(-50%);
   background:#202020;
   color:#f5f5f5;
   font-family:"Courier New",monospace;
-  font-size:30px;
+  font-size:14px;
   font-weight:700;
-  letter-spacing:4px;
-  padding:5px 14px;
-  border-radius:5px;
+  letter-spacing:2px;
+  padding:3px 8px;
+  border-radius:3px;
   box-shadow:
-    inset 0 0 5px #000,
-    0 0 0 3px #111;
+    inset 0 0 3px #000,
+    0 0 0 2px #111;
 }
 
 .caption{
   position:absolute;
-  bottom:49px;
+  bottom:22px;
   width:100%;
   text-align:center;
-  font-size:12px;
+  font-size:6px;
   font-weight:700;
   color:#333;
 }
 
 .status{
   position:absolute;
-  bottom:30px;
+  bottom:10px;
   width:100%;
   text-align:center;
-  font-size:9px;
+  font-size:5px;
   color:#777;
 }
 
 .screw{
   position:absolute;
-  width:15px;
-  height:15px;
-  bottom:38px;
+  width:7px;
+  height:7px;
+  bottom:18px;
   border-radius:50%;
   background:#202020;
   box-shadow:
-    inset 2px 2px 2px rgba(255,255,255,.35);
+    inset 1px 1px 1px rgba(255,255,255,.35);
 }
 
-.screw.left{left:47px;}
-.screw.right{right:47px;}
+.screw.left{left:24px;}
+.screw.right{right:24px;}
 
 .tick{
   position:absolute;
-  left:174px;
-  top:174px;
-  width:2px;
-  height:13px;
+  left:86px;
+  top:86px;
+  width:1px;
+  height:7px;
   background:#222;
   transform-origin:1px 1px;
 }
 
 .tick.small{
-  height:8px;
+  height:4px;
   width:1px;
 }
 
@@ -262,15 +264,15 @@ for(let i=0;i<=50;i++){
 
   const angle = -135 + i * 5.4;
 
-  const radius = 145;
+  const radius = 72;
 
   const x =
-    175 +
+    86 +
     Math.cos((angle - 90) * Math.PI/180)
     * radius;
 
   const y =
-    175 +
+    86 +
     Math.sin((angle - 90) * Math.PI/180)
     * radius;
 
