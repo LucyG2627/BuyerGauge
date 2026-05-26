@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,7 +60,6 @@ body{
       #cc1f1a 274deg,
       transparent 275deg
     );
-
   mask:
     radial-gradient(
       circle,
@@ -76,13 +76,10 @@ body{
   font-size:9px;
   color:#222;
 }
-
-.n0{left:30px; top:104px;}
 .n2{left:28px; top:72px;}
 .n4{left:58px; top:28px;}
 .n6{right:52px; top:30px;}
 .n8{right:25px; top:73px;}
-.n10{right:28px; top:100px;}
 
 .title{
   position:absolute;
@@ -103,7 +100,7 @@ body{
   top:93px;
   left:86px;
   transform-origin:0% 50%;
-  transform:rotate(-135deg);
+  transform:rotate(-218deg);
   border-radius:10px;
   z-index:5;
   box-shadow:0 1px 2px rgba(0,0,0,.35);
@@ -123,7 +120,6 @@ body{
     inset 0 0 4px rgba(255,255,255,.25),
     0 1px 3px rgba(0,0,0,.45);
 }
-
 .hub:after{
   content:"";
   position:absolute;
@@ -179,10 +175,8 @@ body{
   bottom:18px;
   border-radius:50%;
   background:#202020;
-  box-shadow:
-    inset 1px 1px 1px rgba(255,255,255,.35);
+  box-shadow:inset 1px 1px 1px rgba(255,255,255,.35);
 }
-
 .screw.left{left:24px;}
 .screw.right{right:24px;}
 
@@ -195,12 +189,7 @@ body{
   background:#222;
   transform-origin:1px 1px;
 }
-
-.tick.small{
-  height:4px;
-  width:1px;
-}
-
+.tick.small{height:4px;width:1px;}
 </style>
 </head>
 
@@ -208,173 +197,69 @@ body{
 
 <div class="gauge">
   <div class="face" id="face">
-
     <div class="arc"></div>
-
-    <!-- Labels -->
-    <div class="num n0"></div>
     <div class="num n2">200</div>
     <div class="num n4">400</div>
     <div class="num n6">600</div>
     <div class="num n8">800</div>
-    <div class="num n10"></div>
-
-    <div class="title">
-      TOTAL<br>BUYERS
-    </div>
-
+    <div class="title">TOTAL<br>BUYERS</div>
     <div class="needle" id="needle"></div>
-
     <div class="hub"></div>
-
-    <div class="digital" id="buyerCount">
-      000000
-    </div>
-
-    <div class="caption">
-      BUYERS IN DATABASE
-    </div>
-
-    <div class="status" id="status">
-      Connecting...
-    </div>
-
+    <div class="digital" id="buyerCount">000000</div>
+    <div class="caption">BUYERS IN DATABASE</div>
+    <div class="status" id="status">Connecting...</div>
     <div class="screw left"></div>
     <div class="screw right"></div>
-
   </div>
 </div>
 
 <script>
-
-const JSON_URL =
-"https://gist.githubusercontent.com/LucyG2627/80957c760a44a0f5a289f18020d8d5fc/raw/buyers.json";
-
+const JSON_URL = "https://gist.githubusercontent.com/LucyG2627/80957c760a44a0f5a289f18020d8d5fc/raw/buyers.json";
 const MAX_BUYERS = 1000;
 
 const face = document.getElementById("face");
 
 for(let i=0;i<=50;i++){
-
   const tick = document.createElement("div");
-
-  tick.className =
-    i % 5 === 0
-    ? "tick"
-    : "tick small";
-
-  const angle = -135 + i * 5.4;
-
+  tick.className = i%5===0 ? "tick" : "tick small";
+  const angle = -135 + i*5.4;
   const radius = 72;
-
-  const x =
-    86 +
-    Math.cos((angle - 90) * Math.PI/180)
-    * radius;
-
-  const y =
-    86 +
-    Math.sin((angle - 90) * Math.PI/180)
-    * radius;
-
-  tick.style.left = x + "px";
-  tick.style.top = y + "px";
-
-  tick.style.transform =
-    "rotate(" + angle + "deg)";
-
+  const x = 86 + Math.cos((angle-90)*Math.PI/180)*radius;
+  const y = 86 + Math.sin((angle-90)*Math.PI/180)*radius;
+  tick.style.left = x+"px";
+  tick.style.top = y+"px";
+  tick.style.transform = "rotate("+angle+"deg)";
   face.appendChild(tick);
-
 }
 
 function formatCounter(num){
-
-  return String(
-    Math.round(num)
-  ).padStart(6,"0");
-
+  return String(Math.round(num)).padStart(6,"0");
 }
 
 function setNeedle(value){
-
-  const clamped =
-    Math.max(
-      0,
-      Math.min(value, MAX_BUYERS)
-    );
-
-  const startAngle = -135;
-  const endAngle = 135;
-
-  const angle =
-    startAngle +
-    (clamped / MAX_BUYERS)
-    * (endAngle - startAngle);
-
-  document.getElementById("needle")
-    .style.transform =
-      "rotate(" + angle + "deg)";
-
+  const clamped = Math.max(0, Math.min(value, MAX_BUYERS));
+  const angle = -218 + (clamped / MAX_BUYERS) * 257;
+  document.getElementById("needle").style.transform = "rotate("+angle+"deg)";
 }
 
 async function loadCount(){
-
   try{
-
-    const response =
-      await fetch(
-        JSON_URL + "?t=" + Date.now(),
-        {
-          cache:"no-store"
-        }
-      );
-
-    if(!response.ok){
-
-      throw new Error(
-        "HTTP error " + response.status
-      );
-
-    }
-
-    const data =
-      await response.json();
-
-    const count =
-      Number(data.total_buyers);
-
-    document.getElementById("buyerCount")
-      .innerText =
-        formatCounter(count);
-
-    document.getElementById("status")
-      .innerText =
-        "Updated " +
-        new Date().toLocaleTimeString();
-
+    const response = await fetch(JSON_URL+"?t="+Date.now(),{cache:"no-store"});
+    if(!response.ok) throw new Error("HTTP error "+response.status);
+    const data = await response.json();
+    const count = Number(data.total_buyers);
+    document.getElementById("buyerCount").innerText = formatCounter(count);
+    document.getElementById("status").innerText = "Updated "+new Date().toLocaleTimeString();
     setNeedle(count);
-
-  }
-
-  catch(error){
-
-    document.getElementById("buyerCount")
-      .innerText = "ERROR";
-
-    document.getElementById("status")
-      .innerText =
-        error.message;
-
+  } catch(error){
+    document.getElementById("buyerCount").innerText = "ERROR";
+    document.getElementById("status").innerText = error.message;
     console.error(error);
-
   }
-
 }
 
 loadCount();
-
-setInterval(loadCount,30000);
-
+setInterval(loadCount, 30000);
 </script>
 
 </body>
