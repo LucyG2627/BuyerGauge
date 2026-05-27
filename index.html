@@ -198,15 +198,15 @@ body{
 <div class="gauge">
   <div class="face" id="face">
     <div class="arc"></div>
-    <div class="num n2">200</div>
-    <div class="num n4">400</div>
-    <div class="num n6">600</div>
-    <div class="num n8">800</div>
-    <div class="title">TOTAL<br>BUYERS</div>
+    <div class="num n2">50</div>
+    <div class="num n4">100</div>
+    <div class="num n6">150</div>
+    <div class="num n8">200</div>
+    <div class="title">ACTIVE<br>BUYERS</div>
     <div class="needle" id="needle"></div>
     <div class="hub"></div>
     <div class="digital" id="buyerCount">000000</div>
-    <div class="caption">BUYERS IN DATABASE</div>
+    <div class="caption">FINANCIAL BUYERS IN DATABASE</div>
     <div class="status" id="status">Connecting...</div>
     <div class="screw left"></div>
     <div class="screw right"></div>
@@ -215,7 +215,7 @@ body{
 
 <script>
 const JSON_URL = "https://gist.githubusercontent.com/LucyG2627/80957c760a44a0f5a289f18020d8d5fc/raw/buyers.json";
-const MAX_BUYERS = 1000;
+const MAX_BUYERS = 200;
 
 const face = document.getElementById("face");
 
