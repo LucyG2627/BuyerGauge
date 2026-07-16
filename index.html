@@ -6,33 +6,36 @@
 <title>ABC Buyer Gauge</title>
 
 <style>
-body{
-  margin:0;
-  width:288px;
-  height:288px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:transparent;
-  font-family:Arial,sans-serif;
-  overflow:hidden;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-html{
-  overflow:hidden;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
 
-.gauge{
-  width:272px;
-  height:272px;
-  border-radius:50%;
-  background:linear-gradient(145deg,#ff8a1f,#e95f00);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.gauge {
+  width: 272px;
+  height: 272px;
+  flex: 0 0 272px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ff8a1f, #e95f00);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow:
-    0 6px 12px rgba(0,0,0,.25),
-    inset 0 4px 6px rgba(255,255,255,.35);
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    inset 0 4px 6px rgba(255, 255, 255, 0.35);
 }
 
 .face{
