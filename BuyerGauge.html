@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ABC Buyer Gauge</title>
+
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+/* Responsive wrapper: fills whatever space the iframe/container gives it */
+.gauge-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Gauge keeps its original fixed 272px design size.
+   JS below scales this element to fit .gauge-wrap so it's never clipped. */
+.gauge {
+  width: 272px;
+  height: 272px;
+  flex: 0 0 272px;
+  border-radius: 50%;
+  background:#f79521;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    inset 0 4px 6px rgba(255, 255, 255, 0.35);
+  transform-origin: center center;
+}
+
+.face{
+  width:226px;
+  height:226px;
+  border-radius:50%;
+  position:relative;
+  background:radial-gradient(circle,#fff8eb 0%,#f0e4cf 78%,#d1bea0 100%);
+  box-shadow:
+    inset 0 0 12px rgba(0,0,0,.35),
+    0 0 0 3px #222;
+  overflow:hidden;
+}
+
+.arc{
+  position:absolute;
+  inset:12px;
+  border-radius:50%;
+  /* Thin coloured ring at end of scale only — small green safe zone, red danger zone */
+  background:
+    conic-gradient(
+      from 225deg,
+      transparent 0deg,
+      transparent 215deg,
+      #6aa84f 216deg,
+      #6aa84f 248deg,
+      #cc1f1a 249deg,
+      #cc1f1a 270deg,
+      transparent 271deg,
+      transparent 360deg
+    );
+  mask:
+    radial-gradient(
+      circle,
+      transparent 71%,
+      #000 72%,
+      #000 76%,
+      transparent 77%
+    );
+}
+
+.num{
+  position:absolute;
+  font-weight:700;
+  font-size:12px;
+  color:#222;
+  transform:translate(-50%,-50%);
+}
+
+.title{
+  position:absolute;
+  top:46px;         
+  width:100%;
+  text-align:center;
+  font-weight:800;
+  font-size:13px;    
+  line-height:15px; 
+  color:#222;
+}
+
+.needle{
+  position:absolute;
+  width:80px;
+  height:6px;
+  background:#2c3338;
+  top:110px;   /* 113 - 3 */
+  left:113px;  /* face center x, pivot here */
+  transform-origin:0% 50%;
+  transform:rotate(135deg);
+  border-radius:10px;
+  z-index:5;
+  box-shadow:0 1px 2px rgba(0,0,0,.35);
+  transition:transform .8s ease;
+}
+
+.hub{
+  position:absolute;
+  width:24px;
+  height:24px;
+  top:101px;   /* 113 - 12 */
+  left:101px;  /* 113 - 12 */
+  border-radius:50%;
+  background:#252525;
+  z-index:6;
+  box-shadow:
+    inset 0 0 4px rgba(255,255,255,.25),
+    0 1px 3px rgba(0,0,0,.45);
+}
+.hub:after{
+  content:"";
+  position:absolute;
+  width:12px;
+  height:12px;
+  top:6px;
+  left:6px;
+  border-radius:50%;
+  background:#111;
+}
+
+.digital{
+  position:absolute;
+  left:50%;
+  bottom:38px;
+  transform:translateX(-50%);
+  background:#202020;
+  color:#f5f5f5;
+  font-family:"Courier New",monospace;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:2px;
+  padding:3px 8px;
+  border-radius:3px;
+  box-shadow:
+    inset 0 0 3px #000,
+    0 0 0 2px #111;
+}
+
+.caption{
+  position:absolute;
+  bottom:22px;
+  width:100%;
+  text-align:center;
+  font-size:8px;
+  font-weight:700;
+  color:#333;
+}
+
+.status{
+  position:absolute;
+  bottom:10px;
+  width:100%;
+  text-align:center;
+  font-size:5px;
+  color:#777;
+}
+
+.screw{
+  position:absolute;
+  width:7px;
+  height:7px;
+  bottom:18px;
+  border-radius:50%;
+  background:#202020;
+  box-shadow:inset 1px 1px 1px rgba(255,255,255,.35);
+}
+.screw.left{left:24px;}
+.screw.right{right:24px;}
+
+.arc-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="gauge-wrap" id="gaugeWrap">
+  <div class="gauge" id="gaugeEl">
+    <div class="face" id="face">
+      <div class="arc"></div>
+      <svg class="arc-svg" id="arcSvg" viewBox="0 0 226 226" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="title">ACTIVE<br>BUYERS</div>
+      <div class="needle" id="needle"></div>
+      <div class="hub"></div>
+      <div class="digital" id="buyerCount">000000</div>
+      <div class="caption"></div>
+      <div class="status" id="status">Connecting...</div>
+      <div class="screw left"></div>
+      <div class="screw right"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const JSON_URL = "https://gist.githubusercontent.com/LucyG2627/80957c760a44a0f5a289f18020d8d5fc/raw/buyers.json";
+const MAX_BUYERS = 500;
+const C = 113; // face center px (face is 226px)
+const face = document.getElementById("face");
+
+// Geometry (screen coords: x right, y DOWN, angles CW from east):
+//   cos/sin with y-down: angle 0=right, 90=down, 180=left, 270=up
+//   7 o'clock (lower-left) = 225deg? No:
+//     clock positions in screen coords (y-down, CW):
+//       12 = 270deg (up),  3 = 0deg (right),  6 = 90deg (down),  9 = 180deg (left)
+//       7 o'clock = between 6(90) and 9(180) = ~120deg from east... 
+//       Actually: 7 o'clock is 210deg on a standard clock face.
+//       In screen polar (CW from east, y-down): 7 o'clock = 90 + (7/12)*360... 
+//       Simpler: CSS rotate(-135deg) on a →element points it toward lower-left visually.
+//       In screen coords: rotate(-135) = 360-135 = 225deg CW from east.
+//       cos(225°)= -0.707 (left), sin(225°)= -0.707 (UP in screen = negative y).
+//       That's UPPER-LEFT, not lower-left!
+//
+//   CORRECT: lower-left in screen coords (x<0, y>0):
+//     cos(a)<0 and sin(a)>0 → a in (90°,180°) → 135deg = lower-left ✓
+//     cos(135°)=-0.707, sin(135°)=+0.707 → left and DOWN ✓
+//
+//   So: value=0 (lower-left) → 135deg in screen polar
+//       value=MAX (lower-right): lower-right = x>0,y>0 → a in (0°,90°) → 45deg
+//       Sweep from 135deg DOWN to 45deg going counter-clockwise = -90deg? No, too small.
+//       Going CLOCKWISE from 135: 135→180→270→360/0→45 = 270deg sweep ✓
+//
+//   START = 135deg (screen polar), SWEEP = +270deg clockwise
+//   CSS rotate = screen polar angle (same coordinate system)
+
+const START = 135;  // screen polar deg at value=0 (lower-left)
+const SWEEP = 270;  // clockwise sweep to value=MAX (lower-right, 135+270=405=45deg)
+const LABEL_R = 76;
+
+function toXY(deg, r){
+  const rad = deg * Math.PI / 180;
+  return { x: C + Math.cos(rad)*r, y: C + Math.sin(rad)*r };
+}
+
+// Draw ticks as SVG lines — clean, uniform, resolution-independent
+const svg = document.getElementById("arcSvg");
+const CX = 113, CY = 113;
+const MAJOR_OUTER = 104, MAJOR_INNER = 96;
+const MINOR_OUTER = 104, MINOR_INNER = 99;
+
+for(let i = 0; i <= 50; i++){
+  const deg = START + (i/50)*SWEEP;
+  const rad = deg * Math.PI / 180;
+  const isMajor = i % 5 === 0;
+  const outerR = isMajor ? MAJOR_OUTER : MINOR_OUTER;
+  const innerR = isMajor ? MAJOR_INNER : MINOR_INNER;
+  const x1 = CX + Math.cos(rad)*outerR;
+  const y1 = CY + Math.sin(rad)*outerR;
+  const x2 = CX + Math.cos(rad)*innerR;
+  const y2 = CY + Math.sin(rad)*innerR;
+  const line = document.createElementNS("http://www.w3.org/2000/svg","line");
+  line.setAttribute("x1", x1.toFixed(2));
+  line.setAttribute("y1", y1.toFixed(2));
+  line.setAttribute("x2", x2.toFixed(2));
+  line.setAttribute("y2", y2.toFixed(2));
+  line.setAttribute("stroke","#333");
+  line.setAttribute("stroke-width", isMajor ? "1.5" : "1");
+  svg.appendChild(line);
+}
+
+// Labels
+[0,100,200,300,400,500].forEach(val => {
+  const deg = START + (val/MAX_BUYERS)*SWEEP;
+  const p = toXY(deg, LABEL_R);
+  const el = document.createElement("div");
+  el.className = "num";
+  el.innerText = val;
+  el.style.left = p.x+"px";
+  el.style.top  = p.y+"px";
+  face.appendChild(el);
+});
+
+function formatCounter(num){
+  return String(Math.round(num)).padStart(6,"0");
+}
+
+function setNeedle(value){
+  const clamped = Math.max(0, Math.min(value, MAX_BUYERS));
+  const deg = START + (clamped/MAX_BUYERS)*SWEEP;
+  document.getElementById("needle").style.transform = "rotate("+deg+"deg)";
+}
+
+async function loadCount(){
+  try{
+    const response = await fetch(JSON_URL+"?t="+Date.now(),{cache:"no-store"});
+    if(!response.ok) throw new Error("HTTP error "+response.status);
+    const data = await response.json();
+    const count = Number(data.total_buyers);
+    document.getElementById("buyerCount").innerText = formatCounter(count);
+    document.getElementById("status").innerText = "Updated "+new Date().toLocaleTimeString();
+    setNeedle(count);
+  } catch(error){
+    document.getElementById("buyerCount").innerText = "ERROR";
+    document.getElementById("status").innerText = error.message;
+    console.error(error);
+  }
+}
+
+loadCount();
+setInterval(loadCount, 30000);
+
+// ---- Responsive scaling ----
+// The gauge is designed at a fixed 272x272px. Instead of rebuilding every
+// measurement in relative units, we scale the whole gauge element to fit
+// whatever size .gauge-wrap actually is (e.g. inside an iframe). This
+// guarantees the circle is always fully visible and centered, never clipped,
+// no matter how small or oddly-shaped the container is.
+const GAUGE_DESIGN_SIZE = 272;
+const gaugeWrap = document.getElementById("gaugeWrap");
+const gaugeEl = document.getElementById("gaugeEl");
+
+function resizeGauge(){
+  const w = gaugeWrap.clientWidth;
+  const h = gaugeWrap.clientHeight;
+  const fitSize = Math.min(w, h);
+  if (fitSize <= 0) return;
+  const scale = fitSize / GAUGE_DESIGN_SIZE;
+  gaugeEl.style.transform = "scale(" + scale + ")";
+}
+
+resizeGauge();
+window.addEventListener("resize", resizeGauge);
+
+// ResizeObserver catches size changes that window "resize" misses,
+// e.g. the parent page resizing the iframe itself.
+if (window.ResizeObserver) {
+  new ResizeObserver(resizeGauge).observe(gaugeWrap);
+}
+</script>
+
+</body>
+</html>
